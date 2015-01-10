@@ -7,3 +7,4 @@ Usage
 var data = AutoForm.Fixtures.getData(Collections.MyCollection.simpleSchema());
 Collections.MyCollection.insert(data);
 ```
+Note: use autoform.omit for exclude fields.
