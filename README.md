@@ -1,5 +1,5 @@
 # comerc:autoform-fixtures
-Get fixtures data for [Collection2](https://github.com/aldeed/meteor-collection2)
+Get fixtures data for [Collection2](https://github.com/aldeed/meteor-collection2). It is creating random/fake data automatically based on the collection schema. 
 
 Usage
 -----
