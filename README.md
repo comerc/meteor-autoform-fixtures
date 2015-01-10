@@ -9,7 +9,7 @@ Collections.MyCollection.insert(data)
 ```
 Note: you may use `autoform.omit` for exclude fields:
 ```coffee
-MyField:
+myField:
   autoform:
     omit: true
 ```
