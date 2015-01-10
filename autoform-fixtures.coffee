@@ -44,7 +44,6 @@ AutoForm.Fixtures.getData = (ss) ->
   result = {}
   schema = ss.schema()
   for k of schema
-    namespace = k.split(".");
     field = schema[k]
     if field.autoform?.omit or k.slice(-2) is ".$"
       continue
