@@ -7,9 +7,13 @@ Usage
 data = AutoForm.Fixtures.getData(Collections.MyCollection.simpleSchema())
 Collections.MyCollection.insert(data)
 ```
-Note: you may use `autoform.omit` for exclude fields:
+You may use `autoform.omit` for exclude fields:
 ```coffee
-myField:
-  autoform:
-    omit: true
+MyCollection.attachSchema new SimpleSchema
+  userId:
+    type: String
+    autoform:
+      omit: true
+    autoValue: ->
+      Meteor.userId()
 ```
