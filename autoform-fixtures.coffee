@@ -57,7 +57,7 @@ AutoForm.Fixtures.getPreData = (ss, getFakeTextCallback) ->
       result[k] = {}
       continue
     if field.type.name is "Array"
-      element = ss.schema(k + ".$")
+      element = ss.schema("#{k}.$")
       if ["String", "Number"].indexOf(element.type.name) + 1
         if field.autoform?.options
           values = getValues(field, element.type)
