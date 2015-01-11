@@ -4,7 +4,8 @@ Get fixtures data for [Collection2](https://github.com/aldeed/meteor-collection2
 Usage
 -----
 ```coffee
-data = AutoForm.Fixtures.getData(Collections.MyCollection.simpleSchema())
+ss = Collections.MyCollection.simpleSchema()
+data = AutoForm.Fixtures.getData(ss)
 Collections.MyCollection.insert(data)
 ```
 You may use `autoform.omit` for exclude fields:
@@ -16,4 +17,16 @@ MyCollection.attachSchema new SimpleSchema
       omit: true
     autoValue: ->
       Meteor.userId()
+```
+You may use [anti:fake](https://github.com/anticoders/meteor-fake/) with `getFakeTextCallback`
+
+```coffee
+getFakeText = (fieldName, maxLength) ->
+  if fieldName is "my.name"
+    result Fake.word()
+  if maxLength
+    result Fake.sentence(maxLength)
+  result Fake.paragraph()
+  
+data = AutoForm.Fixtures.getData(ss, getFakeText)
 ```
