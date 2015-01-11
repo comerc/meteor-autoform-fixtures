@@ -21,7 +21,7 @@ makeFakeText = (len, count) ->
     text += possibleOne.charAt(Math.floor(Math.random() * possibleOne.length))
     if Math.round(Math.random() * 2)
       text += possibleTwo.charAt(Math.floor(Math.random() * possibleTwo.length))
-    count--
+    count-- # -1 if count undefined
     if count is 0
       break
   text
@@ -126,20 +126,20 @@ AutoForm.Fixtures.getPreData = (ss, getFakeTextCallback) ->
       continue
   result
 
-AutoForm.Fixtures.normalizeData = (result) ->
-  normalData = {}
-  for k of result
+AutoForm.Fixtures.normalizeData = (data) ->
+  result = {}
+  for k of data
     namespace = k.split(".")
     # stupid code, sorry
     if namespace.length is 1
-      normalData[namespace[0]] = result[k]
+      result[namespace[0]] = data[k]
     else if namespace.length is 2
-      normalData[namespace[0]][namespace[1]] = result[k]
+      result[namespace[0]][namespace[1]] = data[k]
     else if namespace.length is 3
-      normalData[namespace[0]][namespace[1]][namespace[2]] = result[k]
+      result[namespace[0]][namespace[1]][namespace[2]] = data[k]
     else
       throw new Error("Current version is support only 3 level of namespace")
-  normalData
+  result
 
 AutoForm.Fixtures.getData = (ss, getFakeTextCallback) ->
   result = AutoForm.Fixtures.getPreData(ss, getFakeTextCallback)
