@@ -64,9 +64,9 @@ AutoForm.Fixtures.getPreData = (ss, getFakeTextCallback) ->
           count = field.maxCount || values.length
           result[k] = fillValues(values, count)
         else
-          throw new Error(k + " - ss without options")
+          throw new Error("#{k} - ss without options")
       else
-        throw new Error(k + " - not supported type [" + element.type.name + "]")
+        throw new Error("#{k} - not supported type [#{element.type.name}]")
       continue
     if field.autoform?.options
       values = getValues(field, field.type)
