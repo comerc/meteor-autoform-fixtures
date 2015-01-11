@@ -1,7 +1,7 @@
 Package.describe({
   name: 'comerc:autoform-fixtures',
   summary: 'Get fixtures data from SimpleSchema with AutoForm',
-  version: '1.1.1',
+  version: '1.1.2',
   git: 'https://github.com/comerc/meteor-autoform-fixtures.git'
 });
 

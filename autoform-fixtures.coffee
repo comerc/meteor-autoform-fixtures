@@ -15,12 +15,12 @@ makeFakeText = (len, count) ->
     if text and Math.round(Math.random() * 2)
       text += " "
       needCapitalize = true
-    text += capitalize possibleOne.charAt(Math.floor(Math.random() * possibleOne.length))
+    if Math.round(Math.random() * 2)
+      text += capitalize possibleOne.charAt(Math.floor(Math.random() * possibleOne.length))
+    text += capitalize possibleTwo.charAt(Math.floor(Math.random() * possibleTwo.length))
+    text += possibleOne.charAt(Math.floor(Math.random() * possibleOne.length))
     if Math.round(Math.random() * 2)
       text += possibleTwo.charAt(Math.floor(Math.random() * possibleTwo.length))
-    if Math.round(Math.random() * 2)
-      text += possibleOne.charAt(Math.floor(Math.random() * possibleOne.length))
-    text += possibleTwo.charAt(Math.floor(Math.random() * possibleTwo.length))
     count--
     if count is 0
       break
