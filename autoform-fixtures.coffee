@@ -1,4 +1,4 @@
-makeText = (len, count) ->
+makeFakeText = (len, count) ->
   len = len || 21
   count = +count
   text = ""
@@ -38,9 +38,15 @@ fillValues = (values, count) ->
     i++
   _.uniq(result)
 
+getFakeText = (fieldName, maxLength) ->
+  if maxLength
+    return makeFakeText(maxLength, Math.round(maxLength / 10))
+  makeFakeText()
+
 AutoForm.Fixtures = {}
 
-AutoForm.Fixtures.getData = (ss) ->
+AutoForm.Fixtures.getPreData = (ss, getFakeTextCallback) ->
+  getFakeTextCallback = getFakeTextCallback || getFakeText
   result = {}
   schema = ss.schema()
   for k of schema
@@ -70,9 +76,9 @@ AutoForm.Fixtures.getData = (ss) ->
       if field.max
         max = field.max
         max = max.call() if typeof max is "function"
-        result[k] = makeText(max, Math.round(max / 10))
+        result[k] = getFakeTextCallback(k, max)
       else
-        result[k] = makeText()
+        result[k] = getFakeTextCallback(k)
       continue
     if field.type.name is "Number"
       min = 0
@@ -108,16 +114,23 @@ AutoForm.Fixtures.getData = (ss) ->
     if field.type.name is "Boolean"
       result[k] = !!Math.round(Math.random())
       continue
-  normalizedResult = {}
+  result
+
+AutoForm.Fixtures.normalizeData = (result) ->
+  normalData = {}
   for k of result
     namespace = k.split(".")
     # stupid code, sorry
     if namespace.length is 1
-      normalizedResult[namespace[0]] = result[k]
+      normalData[namespace[0]] = result[k]
     else if namespace.length is 2
-      normalizedResult[namespace[0]][namespace[1]] = result[k]
+      normalData[namespace[0]][namespace[1]] = result[k]
     else if namespace.length is 3
-      normalizedResult[namespace[0]][namespace[1]][namespace[2]] = result[k]
+      normalData[namespace[0]][namespace[1]][namespace[2]] = result[k]
     else
       throw new Error("Current version is support only 3 level of namespace")
-  normalizedResult
+  normalData
+
+AutoForm.Fixtures.getData = (ss, getFakeTextCallback) ->
+  result = AutoForm.Fixtures.getPreData(ss, getFakeTextCallback)
+  AutoForm.Fixtures.normalizeData(result)
