@@ -35,6 +35,7 @@ data = AutoForm.Fixtures.getData(ss, getFakeText)
 You may use intermediate operations with namespace in mongo-style
 ```coffee
 data = AutoForm.Fixtures.getPreData(ss)
+data["my"] = {} 
 data["my.name"] = "foo"
 data = AutoForm.Fixtures.normalizeData(data)
 # {my: name: "foo"}
