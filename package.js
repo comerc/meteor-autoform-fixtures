@@ -1,7 +1,7 @@
 Package.describe({
   name: 'comerc:autoform-fixtures',
   summary: 'Get fixtures data for Collection2',
-  version: '1.0.0',
+  version: '1.1.0',
   git: 'https://github.com/comerc/meteor-autoform-fixtures.git'
 });
 
