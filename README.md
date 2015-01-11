@@ -37,4 +37,5 @@ You may use intermediate operations with namespace in mongo-style
 result = AutoForm.Fixtures.getPreData(ss)
 result["my.name"] = "foo"
 result = AutoForm.Fixtures.normalizeData(result)
+# {my: name: "foo"}
 ```
