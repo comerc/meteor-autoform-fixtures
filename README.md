@@ -25,7 +25,7 @@ getFakeText = (fieldName, maxLength) ->
   if fieldName is "my.name"
     return Fake.word()
   if maxLength
-    return Fake.sentence(maxLength)
+    return Fake.sentence(Math.round(maxLength / 10))
   Fake.paragraph()
   
 data = AutoForm.Fixtures.getData(ss, getFakeText)
