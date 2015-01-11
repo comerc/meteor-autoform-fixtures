@@ -1,5 +1,5 @@
 # comerc:autoform-fixtures
-Get fixtures data for [SimpleSchema](https://github.com/aldeed/meteor-simple-schema) with [AutoForm](https://github.com/aldeed/meteor-autoform). 
+Get fixtures data from [SimpleSchema](https://github.com/aldeed/meteor-simple-schema) with [AutoForm](https://github.com/aldeed/meteor-autoform). 
 
  
 
