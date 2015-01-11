@@ -23,10 +23,10 @@ You may use [anti:fake](https://github.com/anticoders/meteor-fake/) with `getFak
 ```coffee
 getFakeText = (fieldName, maxLength) ->
   if fieldName is "my.name"
-    result Fake.word()
+    return Fake.word()
   if maxLength
-    result Fake.sentence(maxLength)
-  result Fake.paragraph()
+    return Fake.sentence(maxLength)
+  Fake.paragraph()
   
 data = AutoForm.Fixtures.getData(ss, getFakeText)
 ```
