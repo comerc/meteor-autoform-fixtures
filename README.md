@@ -22,7 +22,6 @@ MyCollection.attachSchema new SimpleSchema
       Meteor.userId()
 ```
 You may use [anti:fake](https://github.com/anticoders/meteor-fake/) with `getFakeTextCallback`
-
 ```coffee
 getFakeText = (fieldName, maxLength) ->
   if fieldName is "my.name"
@@ -32,4 +31,11 @@ getFakeText = (fieldName, maxLength) ->
   Fake.paragraph()
   
 data = AutoForm.Fixtures.getData(ss, getFakeText)
+```
+You may use intermediate operations with namespace in mongo-style
+```coffee
+data = AutoForm.Fixtures.getPreData(ss)
+data["my.name"] = "foo"
+data = AutoForm.Fixtures.normalizeData(data)
+# {my: name: "foo"}
 ```
