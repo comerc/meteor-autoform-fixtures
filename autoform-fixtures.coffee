@@ -1,36 +1,45 @@
 makeFakeText = (len, count) ->
   len = len || 21
   count = +count
+  needCapitalize = true
+  capitalize = (char) ->
+    if needCapitalize
+      needCapitalize = false
+      char.toUpperCase()
+    else
+      char
   text = ""
   possibleOne = "aeiou"
   possibleTwo = "bcdfghjklmnpqrstvwxyz"
-  while text.length + 4 < len
+  while text.length + 5 < len
+    if text and Math.round(Math.random() * 2)
+      text += " "
+      needCapitalize = true
+    text += capitalize possibleOne.charAt(Math.floor(Math.random() * possibleOne.length))
+    if Math.round(Math.random() * 2)
+      text += possibleTwo.charAt(Math.floor(Math.random() * possibleTwo.length))
     if Math.round(Math.random() * 2)
       text += possibleOne.charAt(Math.floor(Math.random() * possibleOne.length))
     text += possibleTwo.charAt(Math.floor(Math.random() * possibleTwo.length))
-    text += possibleOne.charAt(Math.floor(Math.random() * possibleOne.length))
-    if Math.round(Math.random() * 2)
-      text += possibleTwo.charAt(Math.floor(Math.random() * possibleTwo.length))
     count--
     if count is 0
       break
-    if text.length + 5 < len and Math.round(Math.random() * 2)
-      text += " "
   text
 
-getValues = (field, type) ->
-  options = field.autoform.options
+getValues = (options, type) ->
+  # TODO: support allowedValues
   if typeof options is "function"
     options = options.call()
   # Hashtable
   if _.isObject(options) and not _.isArray(options)
-    return _.map options, (v, k) ->
+    _.map options, (v, k) ->
       type(k)
-  # TODO: support allowedValues
-  _.map options, (o) ->
-    o.value
+  else
+    _.map options, (o) ->
+      o.value
 
 fillValues = (values, count) ->
+  count = Math.round(Math.random() * count) || 1
   result = []
   i = 0
   while i < count
@@ -40,8 +49,9 @@ fillValues = (values, count) ->
 
 getFakeText = (fieldName, maxLength) ->
   if maxLength
-    return makeFakeText(maxLength, Math.round(maxLength / 10))
-  makeFakeText()
+    makeFakeText(maxLength, Math.round(maxLength / 10))
+  else
+    makeFakeText()
 
 AutoForm.Fixtures = {}
 
@@ -60,16 +70,16 @@ AutoForm.Fixtures.getPreData = (ss, getFakeTextCallback) ->
       element = ss.schema("#{k}.$")
       if ["String", "Number"].indexOf(element.type.name) + 1
         if field.autoform?.options
-          values = getValues(field, element.type)
+          values = getValues(field.autoform.options, element.type)
           count = field.maxCount || values.length
           result[k] = fillValues(values, count)
-        else
-          throw new Error("#{k} - ss without options")
+        # else
+        #   throw new Error("#{k} - ss without options")
       else
         throw new Error("#{k} - not supported type [#{element.type.name}]")
       continue
     if field.autoform?.options
-      values = getValues(field, field.type)
+      values = getValues(field.autoform.options, field.type)
       result[k] = values[Math.floor(Math.random() * values.length)]
       continue
     if field.type.name is "String"
