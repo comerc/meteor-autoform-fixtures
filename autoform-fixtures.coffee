@@ -41,10 +41,9 @@ getValues = (options, type) ->
 fillValues = (values, count) ->
   count = Math.round(Math.random() * count) || 1
   result = []
-  i = 0
-  while i < count
+  i = count
+  while i--
     result.push(values[Math.floor(Math.random() * values.length)])
-    i++
   _.uniq(result)
 
 getFakeText = (fieldName, maxLength) ->
