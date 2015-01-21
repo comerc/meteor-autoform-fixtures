@@ -70,7 +70,7 @@ AutoForm.Fixtures.getPreData = (ss, getFakeTextCallback) ->
       if ["String", "Number"].indexOf(element.type.name) + 1
         if field.autoform?.options
           values = getValues(field.autoform.options, element.type)
-          count = field.maxCount || values.length
+          count = field.maxCount || 3 # values.length
           result[k] = fillValues(values, count)
         # else
         #   throw new Error("#{k} - ss without options")
