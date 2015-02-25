@@ -67,7 +67,7 @@ AutoForm.Fixtures.getPreData = (ss, getFakeTextCallback) ->
       continue
     if field.type.name is "Array"
       element = ss.schema("#{k}.$")
-      if ["String", "Number"].indexOf(element.type.name) + 1
+      if element.type.name in ["String", "Number"]
         if field.autoform?.options
           values = getValues(field.autoform.options, element.type)
           count = field.maxCount || 3 # values.length
