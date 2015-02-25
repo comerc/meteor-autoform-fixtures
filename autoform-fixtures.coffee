@@ -51,9 +51,9 @@ joinPathComponents = (a, b) ->
     return b
 
 getSubkeys = (baseString, remainingComponents) ->
-  if remainingComponents.length == 0
+  if remainingComponents.length is 0
     return [baseString]
-  if remainingComponents[0] == "$"
+  if remainingComponents[0] is "$"
     return _.chain(_.range(result[baseString].length))
       .map((v, idx)->
         return getSubkeys(
@@ -86,7 +86,7 @@ AutoForm.Fixtures.getPreData = (ss, getFakeTextCallback) ->
         result[k] = _.range(count) # ???
         continue
       arrayField = null
-      if schemaK.slice(-2) == ".$"
+      if schemaK.slice(-2) is ".$"
         arrayField = schema[schemaK.slice(0, -2)]
       options = field.autoform?.options or
         field.autoform?.afFieldInput?.options or
