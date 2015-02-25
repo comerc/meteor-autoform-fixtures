@@ -52,94 +52,112 @@ getFakeText = (fieldName, maxLength) ->
   else
     makeFakeText()
 
+joinPathComponents = (a, b) ->
+  if a and a.length > 0
+    return a + "." + b
+  else
+    return b
+
+getSubkeys = (baseString, remainingComponents) ->
+  if remainingComponents.length == 0
+    return [baseString]
+  if remainingComponents[0] == "$"
+    return _.chain(_.range(result[baseString].length))
+      .map((v, idx)->
+        return getSubkeys(
+          joinPathComponents(baseString, idx),
+          remainingComponents.slice(1))
+      )
+      .flatten()
+      .value()
+  else
+    return getSubkeys(
+      joinPathComponents(baseString, remainingComponents[0]),
+      remainingComponents.slice(1))
+
 AutoForm.Fixtures = {}
 
 AutoForm.Fixtures.getPreData = (ss, getFakeTextCallback) ->
   getFakeTextCallback = getFakeTextCallback || getFakeText
   result = {}
   schema = ss.schema()
-  for k of schema
-    field = schema[k]
-    if field.autoform?.omit or k.slice(-2) is ".$"
+  for schemaK of schema
+    field = schema[schemaK]
+    if field.autoform?.omit
       continue
-    if field.type.name is "Object"
-      result[k] = {}
-      continue
-    if field.type.name is "Array"
-      element = ss.schema("#{k}.$")
-      if element.type.name in ["String", "Number"]
-        if field.autoform?.options
-          values = getValues(field.autoform.options, element.type)
-          count = field.maxCount || 3 # values.length
-          result[k] = fillValues(values, count)
-        # else
-        #   throw new Error("#{k} - ss without options")
-      else
-        throw new Error("#{k} - not supported type [#{element.type.name}]")
-      continue
-    if field.autoform?.options
-      values = getValues(field.autoform.options, field.type)
-      result[k] = values[Math.floor(Math.random() * values.length)]
-      continue
-    if field.type.name is "String"
-      if field.max
-        max = field.max
-        max = max.call() if typeof max is "function"
-        result[k] = getFakeTextCallback(k, max)
-      else
-        result[k] = getFakeTextCallback(k)
-      continue
-    if field.type.name is "Number"
-      min = 0
-      if field.min
-        min = field.min
-        min = min.call() if typeof min is "function"
-      max = 9
-      if field.max
-        max = field.max
-        max = max.call() if typeof max is "function"
-      range = [min..max]
-      result[k] = range[Math.floor(Math.random() * range.length)]
-      continue
-    if field.type.name is "Date"
-      min = false
-      if field.min
-        min = field.min
-        min = min.call() if typeof min is "function"
-      max = false
-      if field.max
-        max = field.max
-        max = max.call() if typeof max is "function"
-      if min and max
-        days = moment(max).diff(moment(min), 'days')
-        result[k] = moment(min).add(Math.round(Math.random() * days), 'day').toDate()
-      else if min
-        result[k] = moment(min).add(Math.round(Math.random() * 15000), 'day').toDate()
-      else if max
-        result[k] = moment(max).add(-Math.round(Math.random() * 15000), 'day').toDate()
-      else
-        result[k] = new Date()
-      continue
-    if field.type.name is "Boolean"
-      result[k] = !!Math.round(Math.random())
-      continue
+    for k in getSubkeys("", schemaK.split('.'))
+      arrayField = null
+      if schemaK.slice(-2) == ".$"
+        arrayField = schema[schemaK.slice(0, -2)]
+      if field.type.name is "Object"
+        result[k] = {}
+        continue
+      if field.type.name is "Array"
+        count = field.maxCount || 3
+        result[k] = _.range(count)
+        continue
+      options = field.autoform?.options or
+        field.autoform?.afFieldInput?.options or
+        arrayField?.autoform?.options or
+        arrayField?.autoform?.afFieldInput?.options
+      if options
+        values = getValues(options, field.type)
+        result[k] = values[Math.floor(Math.random() * values.length)]
+        continue
+      if field.type.name is "String"
+        if field.max
+          max = field.max
+          max = max.call() if typeof max is "function"
+          result[k] = getFakeTextCallback(k, max)
+        else
+          result[k] = getFakeTextCallback(k)
+        continue
+      if field.type.name is "Number"
+        min = 0
+        if field.min
+          min = field.min
+          min = min.call() if typeof min is "function"
+        max = 9
+        if field.max
+          max = field.max
+          max = max.call() if typeof max is "function"
+        range = [min..max]
+        result[k] = range[Math.floor(Math.random() * range.length)]
+        continue
+      if field.type.name is "Date"
+        min = false
+        if field.min
+          min = field.min
+          min = min.call() if typeof min is "function"
+        max = false
+        if field.max
+          max = field.max
+          max = max.call() if typeof max is "function"
+        if min and max
+          days = moment(max).diff(moment(min), 'days')
+          result[k] = moment(min).add(Math.round(Math.random() * days), 'day').toDate()
+        else if min
+          result[k] = moment(min).add(Math.round(Math.random() * 15000), 'day').toDate()
+        else if max
+          result[k] = moment(max).add(-Math.round(Math.random() * 15000), 'day').toDate()
+        else
+          result[k] = new Date()
+        continue
+      if field.type.name is "Boolean"
+        result[k] = !!Math.round(Math.random())
+        continue
   result
 
 AutoForm.Fixtures.normalizeData = (data) ->
   result = {}
   for k of data
     namespace = k.split(".")
-    # stupid code, sorry
-    if namespace.length is 1
-      result[namespace[0]] = data[k]
-    else if namespace.length is 2
-      result[namespace[0]][namespace[1]] = data[k]
-    else if namespace.length is 3
-      result[namespace[0]][namespace[1]][namespace[2]] = data[k]
-    else
-      throw new Error("Current version is support only 3 level of namespace")
+    resultObjPointer = result
+    for pathComponent in namespace.slice(0,-1)
+      resultObjPointer = resultObjPointer[pathComponent]
+    resultObjPointer[namespace.slice(-1)[0]] = data[k]
   result
 
 AutoForm.Fixtures.getData = (ss, getFakeTextCallback) ->
-  result = AutoForm.Fixtures.getPreData(ss, getFakeTextCallback)
-  AutoForm.Fixtures.normalizeData(result)
+  data = AutoForm.Fixtures.getPreData(ss, getFakeTextCallback)
+  AutoForm.Fixtures.normalizeData(data)
