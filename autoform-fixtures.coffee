@@ -38,14 +38,6 @@ getValues = (options, type) ->
     _.map options, (o) ->
       o.value
 
-fillValues = (values, count) ->
-  count = Math.round(Math.random() * count) || 1
-  result = []
-  i = count
-  while i--
-    result.push(values[Math.floor(Math.random() * values.length)])
-  _.uniq(result)
-
 getFakeText = (fieldName, maxLength) ->
   if maxLength
     makeFakeText(maxLength, Math.round(maxLength / 10))
@@ -86,16 +78,16 @@ AutoForm.Fixtures.getPreData = (ss, getFakeTextCallback) ->
     if field.autoform?.omit
       continue
     for k in getSubkeys("", schemaK.split('.'))
-      arrayField = null
-      if schemaK.slice(-2) == ".$"
-        arrayField = schema[schemaK.slice(0, -2)]
       if field.type.name is "Object"
         result[k] = {}
         continue
       if field.type.name is "Array"
         count = field.maxCount || 3
-        result[k] = _.range(count)
+        result[k] = _.range(count) # ???
         continue
+      arrayField = null
+      if schemaK.slice(-2) == ".$"
+        arrayField = schema[schemaK.slice(0, -2)]
       options = field.autoform?.options or
         field.autoform?.afFieldInput?.options or
         arrayField?.autoform?.options or
